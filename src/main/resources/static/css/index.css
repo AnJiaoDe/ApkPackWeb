@@ -1,0 +1,179 @@
+.div_1 {
+    width: 1192px;
+    background: #fff;
+    margin: 0px auto;
+    margin-top: 10px;
+}
+
+.ul_ert {
+    background-color: #2b333b;
+    width: 200px;
+
+}
+
+.ul_ert li {
+    height: 52.875px;
+    font-size: 13.6px;
+}
+
+.ul_ert a {
+    height: 50px;
+    line-height: 50px;
+    width: 470px;
+    padding-left: 37px;
+    padding-right: 70px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-decoration: none;
+}
+
+.div_apk {
+    padding: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 30px;
+    line-height: 30px;
+    width: 300px;
+    margin-top: 10px;
+    border-style: solid;
+    border-width: 1px;
+    margin-left: 10px;
+    background: #fff;
+    border-color: #909090;
+}
+
+.input_apk {
+    padding: 0px;
+    margin: 0px;
+
+    /*position: absolute;*/
+    /*margin-top: 7px;*/
+    height: 30px;
+    line-height: 30px;
+    width: 280px;
+
+    border-style: none;
+    outline: none;
+}
+
+.div_input_container {
+
+    height: 50px;
+    width: 800px;
+    line-height: 50px;
+}
+
+.div_jio {
+    width: 100px;
+}
+
+.img_g4t {
+    height: 20px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.span_jioji{
+    background-color: #909090;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    margin-left: 40px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+.span_j{
+    background-color: #909090;
+
+    height: 40px;
+    line-height: 40px;
+    padding-left: 50px;
+    padding-right: 50px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+.span_jio{
+    height: 40px;
+    line-height: 40px;
+    margin-left: 10px;
+}
+.div_jiom{
+    width: 800px;
+    margin-top: 10px;
+}
+.progress-style{
+    width: 200px;
+    height: 8px;
+    margin-top: 11px;
+    border: 1px #909090 solid;
+    border-radius: 5px;
+}
+.div_pr{
+    width: 0px;
+    height: 8px;
+    background-color: #1d953f;
+    border-radius: 4px;
+}
+.div_jkgmoik{
+    padding-left: 30px;
+}
+.span_jimo{
+    margin-top: 50px;
+}
+.div_pkjiomok{
+    width: 400px;
+    margin-top: 10px;
+    height: 30px;
+    line-height: 30px;
+}
+.span_jimom{
+    margin-left: 10px;
+    font-size: 6px;
+}
+.span_jmiom{
+    margin-top: 20px;
+}
+.span_dapk_log{
+    background-color: #e9e9e9;
+    height: 300px;
+    width: 800px;
+    margin-top: 20px;
+    font-family: Consolas;
+    font-size: 16px;
+}
+.div_jiojik{
+    margin-top: 20px;
+
+}
+.span_jiomgier{
+    height: 40px;
+    line-height:40px;
+    margin-left: 10px;
+}
+.div_lkimo{
+    margin-left: 10px;
+    margin-top: 12px;
+}
+.color_theme{
+    background-color: #2a5caa;
+}
+.div_mata{
+    background-color: #e9e9e9;
+    padding: 10px;
+    border-radius: 10px;
+}
+.div_plugin_out{
+    background-color: #e9e9e9;
+    padding: 10px;
+    width: 800px;
+    border-radius: 10px;
+
+}
+.font_small_pack{
+    font-size: 14px;
+    font-family: Consolas;
+}
+.div_width_right{
+    /*width: 900px;*/
+}

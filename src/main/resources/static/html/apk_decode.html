@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/request.js"></script>
+
+    <script type="text/javascript">
+
+        var fileName;
+
+        var UUID = getUUID();
+        $(function () {
+
+
+            //???????????????????????????????????????????????????????????????????????????
+            $("#img_apk").click(function () {
+                $("#input_select").click();
+            });
+            $("#span_apk_upload").click(function () {
+                $("#input_submit").click();
+            });
+            $("#input_select").change(function () {
+
+                console.log($("#input_select").val());
+                var path = $("#input_select").val().toLowerCase();
+                if (path.substr(path.lastIndexOf(".") + 1, path.length) != "apk") {
+                    alert("请上传APK文件");
+                } else {
+
+                    $("#input_apk_path").val($("#input_select").val());
+                    $("#span_apk_upload").addClass("color_theme");
+                    $("#span_apk_upload").removeClass("tab_unenable");
+                }
+
+
+            });
+
+
+            $("#input_submit").click(function () {
+
+                $("#div_jijiory").removeClass("displaynone");
+
+                var formData = new FormData();
+                formData.append("fileType", FILE_TYPE_APK);
+                formData.append("file", $('#input_select')[0].files[0]);
+                uploadFile("/apkPack/upload_file", formData,
+                    function (per) {
+                        $("#div_kjo").width(per / 100 * 200);
+                        $("#span_prog").text(per + "%");
+                    }, function (data) {
+                        fileName = data.data;
+                        console.log(fileName);
+                        $("#span_jim").text(data.msg);
+                        $("#a_excute").addClass("color_theme");
+                        $("#a_excute").removeClass("tab_unenable");
+
+                    }, function (data) {
+                        $("#span_jim").text(data.message);
+
+                    });
+            });
+            //???????????????????????????????????????????????????????????????????????????
+
+            $("#a_excute").click(function () {
+                openLog();
+
+            });
+
+            //websocket 打开推送消息功能
+            function openLog() {
+
+                if (typeof (WebSocket) == "undefined") {
+                    console.log("您的浏览器不支持WebSocket");
+                } else {
+                    console.log("您的浏览器支持WebSocket");
+//实现化WebSocket对象，指定要连接的服务器地址与端口 建立连接
+//等同于socket = new WebSocket("ws://localhost:8083/checkcentersys/websocket/20");
+//socket = new WebSocket("http://localhost:8080/websocket/${cid}".replace("http","ws"));
+                    var socket = new WebSocket("ws://localhost:8080/apkPack/websocket/" + UUID);
+
+//获得消息事件
+                    socket.onmessage = function (data) {
+                        console.log(data.data);
+                        var response = jQuery.parseJSON(data.data);
+
+                        switch (response.code) {
+                            //socket连接成功
+                            case CODE_WEBSOCKET_OPEN:
+                                console.log("Socket 已打开");
+                                // 开始反编译
+                                $.ajax({
+                                    url: "/apkPack/decode_apk",
+                                    type: 'POST',
+                                    async: true,
+                                    data: {uuid: UUID, fileName: fileName},
+                                    error: function (data) {
+
+                                        $("#span_decode_suc").removeClass("displaynone");
+                                        $("#span_decode_suc").text(data.message);
+                                    }
+                                });
+                                break
+                            case CODE_DOING://反编译进行中
+                                $("#textarea_log_dapk").append(response.msg + "\n");
+
+
+                                break
+                            case CODE_SUCCESS://反编译成功
+                                $("#textarea_log_dapk").append(response.msg + "\n");
+                                $("#a_download").addClass("color_theme");
+                                $("#a_download").removeClass("tab_unenable");
+
+                                socket.close();
+                                break
+                            case CODE_FAIL://反编译失败
+                                $("#textarea_log_dapk").append(response.msg + "\n");
+                                socket.close();
+
+                                break
+                        }
+//发现消息进入 开始处理前端触发逻辑
+                    };
+//关闭事件
+                    socket.onclose = function () {
+                        console.log("Socket已关闭");
+                    };
+//发生了错误事件
+                    socket.onerror = function () {
+                        console.log("Socket发生了错误");
+//此时可以尝试刷新页面
+                    }
+//离开页面时，关闭socket
+//$1.8中已经被废弃，3.0中已经移除
+// $(window).unload(function(){
+// socket.close();
+//});
+                }
+            }
+
+            /**
+             * 下载反编译文件
+             */
+            $("#a_download").click(function () {
+                $("#div_loading").removeClass("displaynone");
+                $("#span_zip").removeClass("displaynone");
+
+                $.ajax({
+                    url: "/apkPack/compress_file",
+                    type: 'POST',
+                    data: {fileType:FILE_TYPE_DCODEAPK,fileName:fileName},
+                    async: true,
+
+                    success: function (data) {
+
+                        fileName = data.data;
+                        $("#div_loading").addClass("displaynone");
+                        $("#span_zip").text(data.msg);
+                        $("#input_fileType").val(FILE_TYPE_DCODEAPK);
+                        $("#input_fileName").val(fileName);
+
+                        $("#form_downapk").submit();
+
+
+                    },
+                    error: function (data) {
+                        $("#span_zip").text("压缩反编译文件失败");
+
+                    }
+                });
+
+
+            });
+        });
+
+    </script>
+</head>
+<body>
+<!--/////////////////////////////反编译-->
+<div id="div_decode" class="float_left div_jkgmoik  ">
+    <div class="div_input_container">
+
+        <span class="float_left span_input_left">APK:</span>
+        <div class="div_apk float_left" style="margin-left: 42px;">
+            <input id="input_apk_path" type="text" class="input_apk float_left" value maxlength="50"
+                   placeholder="请选择或输入路径"/>
+            <img id="img_apk" src="../img/folder.png" class="img_g4t"/>
+
+
+        </div>
+        <div class="float_left">
+
+            <form id="form_apk" method="post"
+                  enctype="multipart/form-data">
+
+                    <span id="span_apk_upload"
+                          class="float_left span_jioji  span_oneline cursorpointer tab_unenable">上传</span>
+                <input id="input_select" type="file" name="file" class="displaynone">
+                <input id="input_submit" type="button" class="displaynone">
+            </form>
+        </div>
+
+    </div>
+    <div id="div_jijiory" class="div_pkjiomok displaynone">
+        <div id="div_pro" class="progress-style float_left">
+            <div id="div_kjo" class="div_pr "></div>
+        </div>
+        <span class="float_left span_jimom" id="span_prog">0%</span>
+    </div>
+    <div class=" span_jmiom"><span id="span_jim"></span></div>
+
+
+    <!--<div class="div_hjio">-->
+
+    <!--<span class="float_left">输出路径:</span>-->
+    <!--<div class="div_apk float_left">-->
+    <!--<input type="text" class="input_apk float_left" value maxlength="50" placeholder="请选择或输入路径"/>-->
+    <!--<img id="img_apk_output" src="../img/folder.png" class="img_g4t"/>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <div class="div_jiom">
+        <a id="a_excute" class="float_left span_j span_oneline cursorpointer tab_unenable">执行</a>
+
+        <span id="span_decode_suc" class="float_left span_jio displaynone"></span>
+
+        <div class="clear_float"></div>
+        <textarea id="textarea_log_dapk" class="span_dapk_log "></textarea>
+
+    </div>
+
+    <!--<form action="Handler1.ashx" method="get">&lt;!&ndash;注意action里面的连接不能带参数的&ndash;&gt;>-->
+    <!--<input type="text" name="id" value="3" />-->
+    <!--<input type="text" name="name" value="abc" />-->
+    <!--<input type="submit" value="通过传递参数" />-->
+    <!--</form>-->
+
+
+    <div class="div_jiojik">
+        <a id="a_download" class="float_left span_j span_oneline  cursorpointer tab_unenable">下载</a>
+
+        <form id="form_downapk" method="post" class="float_left" action="/apkPack/download_file">
+
+            <input id="input_fileName" name="fileName" class="displaynone">
+            <input id="input_fileType" name="fileType" class="displaynone">
+            <!--<input id="input_downsubmit" type="button" class="displaynone">-->
+        </form>
+        <div id="div_loading" class="float_left div_loding div_lkimo displaynone"></div>
+        <span id="span_zip" class="span_jiomgier displaynone">压缩中...</span>
+
+        <!--<span id="span_dapk_down_suc" class="displaynone" >下载成功</span>-->
+    </div>
+
+
+</div>
+</body>
+</html>
